@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Line Mask</title>
+<!-- Apple iPad Specific Meta information --> 
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1"> 
+<meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no" /> 		
+<meta name="apple-touch-fullscreen" content="yes" />
+<meta name="apple-mobile-web-app-capable" content="yes" /> 
+<meta name="apple-mobile-web-app-status-bar-style" content="black" /> 
+ 
+<style type="text/css" media="screen">
+
+
+body {
+	/* background-color: transparent; */ /* makes embedded webviews have a clear background */
+	margin: 0;
+	padding: 0;
+	font-family: Helvetica;
+}
+
+#page {
+	z-index: 1;
+	display: block;
+	height: 768px;
+	width: 1024px;
+	background-color: white;
+}
+
+#bg-image {
+	position: absolute;
+	z-index: 0;
+	top: 0;
+	left: 0;
+	-webkit-mask-repeat: no-repeat;  
+	-webkit-mask-position: center;
+	/*-webkit-mask-box-image: url(#mask) 75 stretch;*/
+}
+
+svg {
+	
+}
+
+</style>
+
+</head>
+<body>
+
+	<header>
+	
+	</header>
+	<img src="img/theme-clock-hd.png" id="bg-image" alt="" />
+	<section id="page">
+		
+	</section>
+
+	<footer>
+	
+	</footer>
+
+<script type="text/javascript" src="js/jquery-1.4.4.min.js"></script>
+<script type="text/javascript" src="js/raphael-min.js"></script>
+<script type="text/javascript" src="js/base64encode.js"></script>
+
+<script type="text/javascript">
+
+;(function(doc){
+    var stylesheet = doc.styleSheets[0];
+    	paper = null,
+    	svgData = "",
+    	locationStr = "",
+    	base64Str = "",
+    	utf8Str = "",
+    	pageElem = null,
+    	bgImageElem = null,
+    	cachePoint = {
+    		x : 0,
+    		y : 0
+    	},
+    	touchPoint = {
+    		x : 0,
+    		y : 0
+    	};
+
+	function setUpPage() {
+		paper = Raphael(doc.getElementById("page"), 1024, 768);
+		pageElem =  doc.getElementById("page");
+		bgImageElem = doc.getElementById("bg-image");
+		doc.getElementsByTagName("svg")[0].setAttribute("id", "mask");
+	}
+	
+	function draw() {
+		cachePoint.x = touchPoint.x;
+	    cachePoint.y = touchPoint.y;
+		paper.path(locationStr).attr({fill: "#000", stroke: "#000", opacity: 1, "stroke-linecap" : "round"}).attr("stroke-width", 50);
+		svgData = pageElem.innerHTML;
+		utf8Str = ["-webkit-mask-image:url(data:image/svg+xml;charset=utf-8,",encodeURIComponent(svgData),")"].join("");
+		bgImageElem.setAttribute("style", utf8Str);
+		svgData = "";
+	}
+
+	document.addEventListener('touchmove', function(event) {
+	    event.preventDefault();
+	    var touch = event.touches[0];
+		touchPoint.x = touchPoint.x;
+	    touchPoint.y = touchPoint.y;
+	}, false);
+	
+	document.addEventListener('mousemove', function(event) {
+  		touchPoint.x =  event.pageX;
+	    touchPoint.y =  event.pageY;
+	    locationStr = ["M",cachePoint.x," ",cachePoint.y,"L",touchPoint.x," ",touchPoint.y].join("");
+		draw();
+	}, false);
+	
+	document.addEventListener('DOMContentLoaded', function(event) {
+	    setUpPage();
+	}, false);
+}(document));
+
+</script>
+</body>
+</html>
